@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/TayrineSoares/tinyapp/issues"
   },
-  "homepage": "https://github.com/TayrineSoares/tinyapp#readme"
+  "homepage": "https://github.com/TayrineSoares/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
 }
