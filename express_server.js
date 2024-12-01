@@ -72,6 +72,12 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
+app.get("/u/:id", (req, res) => {
+  const id = req.params.id; 
+  const longURL = urlDatabase[req.params.id];
+  res.redirect(longURL);
+});
+
 
 app.get("/urls/:id", (req, res) => {
   const templateVars = { 
@@ -81,4 +87,11 @@ app.get("/urls/:id", (req, res) => {
 
    // Render the 'urls_show' view and pass the template variables
   res.render("urls_show", templateVars);
+});
+
+
+app.get("/u/:id", (req, res) => {
+  
+  const longURL = urlDatabase[req.params.id];
+  res.redirect(longURL);
 });
