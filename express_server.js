@@ -8,11 +8,21 @@ const generateRandomString = function() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
 
+  //// Generate a random string of length 6
   for (let i = 0; i < 6; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length); 
     result += characters[randomIndex];
   }
-  return result;
+
+  // Check if the generated string already exists in the database
+  if (!urlDatabase[result]) {
+    //If it doesn't exist, return the generated string
+    return result;
+
+  } else {
+    // If not unique, regenerate the string
+    return generateRandomString();
+  }
 };
 
 
@@ -77,17 +87,11 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
-app.get("/u/:id", (req, res) => {
-  const id = req.params.id; 
-  const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
-});
-
 
 app.get("/urls/:id", (req, res) => {
   const templateVars = { 
     id: req.params.id, // Extract the URL ID from the request
-    longURL: urlDatabase[req.params.id] // Get the corresponding long URL from the database
+    longURL: urlDatabase[req.params.id] 
   };
 
    // Render the 'urls_show' view and pass the template variables
@@ -96,7 +100,7 @@ app.get("/urls/:id", (req, res) => {
 
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id]; // Get the corresponding long URL from the database
 
   // If the short URL doesn't exist, send a 404 error
   if (!longURL) {
