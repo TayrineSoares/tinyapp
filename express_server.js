@@ -52,20 +52,33 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  
-  const longURL = req.body.longURL; // URL inserted on the form
-  const id = generateRandomString(); // generate an Id for the submitted url (the Id will be the short URL)
-  
 
-  urlDatabase[id] = longURL; // adds new info (key pair value) to urlDatabase object
+   // Log the POST request body to the console
+  console.log("Long URL sent in the form", req.body);
+  
+  // URL inserted on the form
+  const longURL = req.body.longURL;
 
-  console.log(urlDatabase);
-  res.send(`New short URL created: ${id}`); //Responds with the new short URL
+  // generate an Id for the submitted url (the Id will be the short URL)
+  const id = generateRandomString();
+  
+  // adds new info (key pair value) to urlDatabase object
+  urlDatabase[id] = longURL;
+  
+  //Log the updated urlDatabase (for debugging)
+  console.log("Updated urlDatabase", urlDatabase);
+
+  // Redirect to the new short URL page (/urls/:id)
+  res.redirect(`/urls/${id}`);
 });
 
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  const templateVars = { 
+    id: req.params.id, // Extract the URL ID from the request
+    longURL: urlDatabase[req.params.id] // Get the corresponding long URL from the database
+  };
+
+   // Render the 'urls_show' view and pass the template variables
   res.render("urls_show", templateVars);
 });
