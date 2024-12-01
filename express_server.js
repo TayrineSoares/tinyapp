@@ -53,6 +53,11 @@ app.get("/urls/new", (req, res) => {
 
 app.post("/urls", (req, res) => {
 
+  // Check if longURL is provided
+  if (!longURL || longURL.trim() === '') {
+    return res.status(400).send('Error: Please provide a valid URL');
+  }
+
    // Log the POST request body to the console
   console.log("Long URL sent in the form", req.body);
   
