@@ -53,7 +53,15 @@ app.get("/urls/new", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  
+  const longURL = req.body.longURL; // URL inserted on the form
+  const id = generateRandomString(); // generate an Id for the submitted url (the Id will be the short URL)
+  
+
+  urlDatabase[id] = longURL; // adds new info (key pair value) to urlDatabase object
+
+  console.log(urlDatabase);
+  res.send(`New short URL created: ${id}`); //Responds with the new short URL
 });
 
 
