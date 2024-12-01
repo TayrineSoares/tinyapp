@@ -53,16 +53,16 @@ app.get("/urls/new", (req, res) => {
 
 app.post("/urls", (req, res) => {
 
-  // Check if longURL is provided
-  if (!longURL || longURL.trim() === '') {
-    return res.status(400).send('Error: Please provide a valid URL');
-  }
-
    // Log the POST request body to the console
   console.log("Long URL sent in the form", req.body);
   
   // URL inserted on the form
   const longURL = req.body.longURL;
+
+  // Check if longURL is provided
+  if (!longURL || longURL.trim() === '') {
+    return res.status(400).send('Error: Please provide a valid URL');
+  }
 
   // generate an Id for the submitted url (the Id will be the short URL)
   const id = generateRandomString();
