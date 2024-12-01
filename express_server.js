@@ -91,7 +91,11 @@ app.get("/urls/:id", (req, res) => {
 
 
 app.get("/u/:id", (req, res) => {
-  
   const longURL = urlDatabase[req.params.id];
+
+  // If the short URL doesn't exist, send a 404 error
+  if (!longURL) {
+    return res.status(404).send('Short URL not found');
+  }
   res.redirect(longURL);
 });
