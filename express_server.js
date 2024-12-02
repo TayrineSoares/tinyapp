@@ -133,7 +133,7 @@ app.post("/urls/:id", (req, res) => {
 
   //Update the URL 
   const newUrl = req.body.newURL;
-  urlDatabase[id].longURL = newUrl;
+  urlDatabase[id] = newUrl;
 
   res.redirect(`/urls/${id}`);
 });
