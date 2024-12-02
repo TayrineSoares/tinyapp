@@ -65,7 +65,7 @@ app.post("/urls", (req, res) => {
 
    // Log the POST request body to the console
   console.log("Long URL sent in the form", req.body);
-  
+
   // URL inserted on the form
   const longURL = req.body.longURL;
 
@@ -76,10 +76,10 @@ app.post("/urls", (req, res) => {
 
   // generate an Id for the submitted url (the Id will be the short URL)
   const id = generateRandomString();
-  
+
   // adds new info (key pair value) to urlDatabase object
   urlDatabase[id] = longURL;
-  
+
   //Log the updated urlDatabase (for debugging)
   console.log("Updated urlDatabase", urlDatabase);
 
@@ -110,7 +110,7 @@ app.get("/u/:id", (req, res) => {
 });
 
 
-// Add a `POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
+// Add a `POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
 app.post("/urls/:id/delete", (req, res) => {
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Error: URL does not exist.");
@@ -120,13 +120,13 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls")
 });
 
-// Add Edit button and a POST route that redirects the client back to the 'urls_index' page
+// Add Edit button and a POST route that redirects the client back to the 'urls_index' page
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   if (!urlDatabase[id]) {
     return res.status(404).send("Error: URL does not exist.");
   }
+  
 
   res.redirect(`/urls/${id}`);
 });
-
