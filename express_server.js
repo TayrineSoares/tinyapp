@@ -52,13 +52,18 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    username: req.cookies["username"],
+    urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    username: req.cookies["username"], // Get username from cookies
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.post("/urls", (req, res) => {
@@ -89,6 +94,7 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const templateVars = { 
+    username: req.cookies["username"],
     id: req.params.id, // Extract the URL ID from the request
     longURL: urlDatabase[req.params.id] 
   };
@@ -131,6 +137,7 @@ app.post("/urls/:id", (req, res) => {
 
   res.redirect(`/urls/${id}`);
 });
+
 
 
 app.post("/login", (req, res) => {
