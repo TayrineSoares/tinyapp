@@ -126,7 +126,10 @@ app.post("/urls/:id", (req, res) => {
   if (!urlDatabase[id]) {
     return res.status(404).send("Error: URL does not exist.");
   }
-  
+
+  //Update the URL 
+  const newUrl = req.body.newURL;
+  urlDatabase[id].longURL = newUrl;
 
   res.redirect(`/urls/${id}`);
 });
