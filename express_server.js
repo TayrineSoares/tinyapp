@@ -127,5 +127,6 @@ app.post("/urls/:id", (req, res) => {
     return res.status(404).send("Error: URL does not exist.");
   }
 
-  res.redirect("/urls/id");
+  res.redirect(`/urls/${id}`);
 });
+
