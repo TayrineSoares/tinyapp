@@ -70,8 +70,8 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
 
   // Check if longURL is provided
-  if (!longURL || longURL.trim() === '') {
-    return res.status(400).send('Error: Please provide a valid URL');
+  if (!longURL || longURL.trim() === "") {
+    return res.status(400).send("Error: Please provide a valid URL");
   }
 
   // generate an Id for the submitted url (the Id will be the short URL)
@@ -107,4 +107,11 @@ app.get("/u/:id", (req, res) => {
     return res.status(404).send('Short URL not found');
   }
   res.redirect(longURL);
+});
+
+
+// Add a `POST` route that removes a URL resource and redirect the client back to the `urls_index` page 
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls")
 });
