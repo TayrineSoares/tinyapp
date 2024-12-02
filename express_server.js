@@ -110,8 +110,7 @@ app.get("/u/:id", (req, res) => {
 });
 
 
-// Add a `POST` route that removes a URL resource and redirect the client back to the `urls_index` page 
-// check if the URL to be deleted actually exists in the urlDatabase before trying to delete it.
+// Add a `POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
 app.post("/urls/:id/delete", (req, res) => {
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Error: URL does not exist.");
@@ -119,4 +118,14 @@ app.post("/urls/:id/delete", (req, res) => {
 
   delete urlDatabase[req.params.id];
   res.redirect("/urls")
+});
+
+// Add Edit button and a `POST` route that redirects the client back to the 'urls_index' page
+app.post("/urls/:id", (req, res) => {
+  const id = req.params.id;
+  if (!urlDatabase[id]) {
+    return res.status(404).send("Error: URL does not exist.");
+  }
+
+  res.redirect("/urls/id");
 });
