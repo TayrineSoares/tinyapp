@@ -111,7 +111,12 @@ app.get("/u/:id", (req, res) => {
 
 
 // Add a `POST` route that removes a URL resource and redirect the client back to the `urls_index` page 
+// For example, you could check if the URL to be deleted actually exists in the urlDatabase before trying to delete it.
 app.post("/urls/:id/delete", (req, res) => {
+  if (!urlDatabase[req.params.id]) {
+    return res.status(404).send("Error: URL does not exist.");
+  }
+  
   delete urlDatabase[req.params.id];
   res.redirect("/urls")
 });
