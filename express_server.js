@@ -2,46 +2,43 @@ const express = require('express');
 const app = express(); 
 const PORT = 8080; //Default port 8080
 
-
+  //// Generate a random string of length 6
 const generateRandomString = function() {
 
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
 
-  //// Generate a random string of length 6
   for (let i = 0; i < 6; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length); 
     result += characters[randomIndex];
   }
 
-  // Check if the generated string already exists in the database
   if (!urlDatabase[result]) {
-    //If it doesn't exist, return the generated string
     return result;
 
   } else {
-    // If not unique, regenerate the string
     return generateRandomString();
   }
 };
 
 
 app.set("view engine", "ejs");
-
 app.use(express.urlencoded({ extended: true }));
+
 
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
 
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
 app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -62,8 +59,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-
-   // Log the POST request body to the console
+   // Log the POST request (submission form from "new") body to the console
   console.log("Long URL sent in the form", req.body);
 
   // URL inserted on the form
@@ -102,7 +98,6 @@ app.get("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id]; // Get the corresponding long URL from the database
 
-  // If the short URL doesn't exist, send a 404 error
   if (!longURL) {
     return res.status(404).send('Short URL not found');
   }
@@ -120,7 +115,7 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls")
 });
 
-// Add Edit button and a POST route that redirects the client back to the 'urls_index' page
+// Add POST route for edit button that redirects the client back to the 'urls_index' page and updates the URL
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   if (!urlDatabase[id]) {
