@@ -157,3 +157,12 @@ app.post('/logout', (req, res) => {
   res.clearCookie('username');  // Clear the username cookie
   res.redirect('/urls');  // Redirect after logout (or another page)
 });
+
+//  GET /register endpoint, which returns the template register.ejs
+app.get('/register', (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"], // Get username from cookies
+  };
+  res.render('register', templateVars);
+
+});
