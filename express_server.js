@@ -139,7 +139,7 @@ app.post("/urls/:id", (req, res) => {
 });
 
 
-
+// Login route
 app.post("/login", (req, res) => {
   const username = req.body.username;
 
@@ -150,4 +150,10 @@ app.post("/login", (req, res) => {
   } else {
     res.status(400).send("Username is required.");
   }
+});
+
+// Logout route
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');  // Clear the username cookie
+  res.redirect('/urls');  // Redirect after logout (or another page)
 });
