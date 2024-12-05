@@ -208,7 +208,7 @@ app.get('/register', (req, res) => {
 });
 
 
-// POST/register endpoint. Add a new user object to the global users object. The user object should include the user's id, email and password, similar to the example above.
+// POST/register endpoint. Add a new user object to the global users object. The user object should include the user's id, email and password. 
 
 app.post('/register', (req, res) => {
   // const email = req.body.email 
@@ -219,8 +219,14 @@ app.post('/register', (req, res) => {
   if (!email || !password) {
     return res.status(400).send("Email and password are required.");
   }
+
+  //Check if user already exists 
+  const existingUser = userLookup(email); 
+    if (existingUser) { // checks if the return of userLookup is truthy
+      return res.status(400).send("Email is already registered.");
+    }
   
-  // Generate unique ID 
+  // If doesnt exist, create user and generate new Id. 
   const userId = generateRandomString();
 
   // Add the new user to the users object
