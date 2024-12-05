@@ -34,7 +34,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
-// USERS
+// CONST USERS
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -49,15 +49,15 @@ const users = {
 };
 
 
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+
+
 app.get("/", (req, res) => {
   res.send("Hello");
 });
-
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -66,6 +66,19 @@ app.get("/urls.json", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
+
+
+
+// userLookup helper function to find registered users 
+const userLookup = function(userEmail) {
+  for (const userId in users) {
+    if (users[userId].email === userEmail) {
+      return userId; 
+    }
+  }
+  return null; 
+};
+
 
 app.get("/urls", (req, res) => {
   const userId = req.cookies["userId"];
@@ -222,3 +235,4 @@ app.post('/register', (req, res) => {
 
   res.redirect('/urls');
 });
+
