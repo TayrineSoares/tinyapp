@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap CSS -->
+  <link
+  rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+  crossorigin="anonymous"
+  />
+
+  <title>Login</title>
+</head>
+
+
+<body>
+  <%- include('partials/_header') %>
+
+  <main style="margin: 1em;">
+    <h3>Login</h3>
+    <form class="form" action="/login" method="POST">
+      <div class="form-group mb-2">
+        <!-- Email Input -->
+        <label for="email">E-mail</label>
+        <input
+          class="form-control"
+          type="email"
+          name="email"
+          placeholder="email@email.com"
+          style="width: 300px;"
+          required
+        />
+      </div>
+      <!-- Password Input -->
+      <div class="form-group mb-2">
+        <label for="password">Password</label>
+        <input
+          class="form-control"
+          type="password"
+          name="password"
+          style="width: 300px;"
+          required
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+
+      </div>
+
+</body>
+</html>
+
+<!-- a login form; this form should ask for an email and password and send a POST request to /login. -->
+

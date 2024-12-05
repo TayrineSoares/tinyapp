@@ -242,3 +242,14 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
+
+// GET /login endpoint that responds with this new login form template
+app.get('/login', (req, res) => {
+  const userId = req.cookies["userId"];
+  const user = users[userId]; // Find the user object
+  const templateVars = { user: user };
+  
+  res.render('login', templateVars);
+
+});
+
