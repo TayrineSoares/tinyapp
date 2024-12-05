@@ -21,29 +21,25 @@
       </div>
     </div>
 
+
+
     <div class="ml-auto">
+      <!-- If user is logged in -->
       <% if (user) { %>
-        <span class="navbar-text mr-3">Logged in as <%= user.id %>! </span>
-        </form>        
-      </div>
-      <form class="form-inline" action="/logout" method="POST">
-        <button type="submit" class="btn-outline">Logout</button>
-      </form>
+         <!-- Show user email -->
+        <span class="navbar-text mr-3">Logged in as <%= user.id %>! </span> 
+        <!-- Logout Button -->
+        <form class="form-inline" action="/logout" method="POST">
+          <button type="submit" class="btn-outline">Logout</button>
+        </form>
       
+        <!-- If user is NOT logged in -->
         <% } else { %>
-        <form class="form-inline" action="/login" method="POST">
-        <div class="form-group mb-2">
-          <input
-            class="form-control"
-            type="text"
-            name="username"
-            placeholder="Username"
-            style="width: 300px; margin: 1em"
-          />
-          <button type="submit" class="btn-outline">Login</button>
-        
+          <div class="navbar-nav">
+          <a class="nav-item nav-link" href="/login">Login</a>
+          <a class="nav-item nav-link" href="/register">Register</a>
         </div>
-      </form>
+    </div>
       <% } %>
   </nav>
   

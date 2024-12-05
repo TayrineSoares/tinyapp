@@ -248,8 +248,10 @@ app.get('/login', (req, res) => {
   const userId = req.cookies["userId"];
   const user = users[userId]; // Find the user object
   const templateVars = { user: user };
-  
+
   res.render('login', templateVars);
 
 });
+
+
 
