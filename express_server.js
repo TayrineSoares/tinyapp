@@ -34,6 +34,23 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
+
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "a@a.com",
+    password: "1",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "b@b.com",
+    password: "2",
+  },
+};
+
+
+
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
