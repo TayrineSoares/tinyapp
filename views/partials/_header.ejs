@@ -22,8 +22,8 @@
     </div>
 
     <div class="ml-auto">
-      <% if (username) { %>
-        <span class="navbar-text mr-3">Logged in as <%= username %>! </span>
+      <% if (user) { %>
+        <span class="navbar-text mr-3">Logged in as <%= user.id %>! </span>
         </form>        
       </div>
       <form class="form-inline" action="/logout" method="POST">

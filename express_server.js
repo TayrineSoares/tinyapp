@@ -68,19 +68,25 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  const userId = req.cookies["userId"];
+  const user = users[userId]; // The new user object includin id, email and password 
+  //console.log(user);
+
   const templateVars = { 
-    username: req.cookies["username"],
+    user: user,
     urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    username: req.cookies["username"], // Get username from cookies
-  };
+  const userId = req.cookies["userId"]; 
+  const user = users[userId]; 
+  const templateVars = { user: user }; 
+
   res.render("urls_new", templateVars);
 });
+
 
 app.post("/urls", (req, res) => {
    // Log the POST request (submission form from "new") body to the console
@@ -109,8 +115,11 @@ app.post("/urls", (req, res) => {
 
 
 app.get("/urls/:id", (req, res) => {
+  const userId = req.cookies["userId"];
+  const user = users[userId]; // Find the user object
+
   const templateVars = { 
-    username: req.cookies["username"],
+    user: user,
     id: req.params.id, // Extract the URL ID from the request
     longURL: urlDatabase[req.params.id] 
   };
@@ -130,7 +139,7 @@ app.get("/u/:id", (req, res) => {
 });
 
 
-// Add a `POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
+//`POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
 app.post("/urls/:id/delete", (req, res) => {
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Error: URL does not exist.");
@@ -140,7 +149,7 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls")
 });
 
-// Add POST route for edit button that redirects the client back to the 'urls_index' page and updates the URL
+//POST route for edit button that redirects the client back to the 'urls_index' page and updates the URL
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   if (!urlDatabase[id]) {
@@ -157,10 +166,10 @@ app.post("/urls/:id", (req, res) => {
 
 // Login route
 app.post("/login", (req, res) => {
-  const username = req.body.username;
+  const userId = req.body.userId;
 
-  if (username) {
-    res.cookie("username", username);
+  if (userId) {
+    res.cookie("userId", username);
     res.redirect("/urls");
     
   } else {
@@ -170,14 +179,17 @@ app.post("/login", (req, res) => {
 
 // Logout route
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');  // Clear the username cookie
+  res.clearCookie('userId');  // Clear the username cookie
   res.redirect('/urls');  // Redirect after logout (or another page)
 });
 
 //  GET /register endpoint, which returns the template register.ejs
 app.get('/register', (req, res) => {
+  const userId = req.cookies["userId"];
+  const user = users[userId]; // Find the user object
+
   const templateVars = {
-    username: req.cookies["username"], // Get username from cookies
+    user: user, // Get username from cookies
   };
   res.render('register', templateVars);
 });
@@ -206,7 +218,7 @@ app.post('/register', (req, res) => {
   }
   
   // Set a cookie with the new user's ID
-  res.cookie('user_id', userId);
+  res.cookie('userId', userId);
 
   res.redirect('/urls');
 });
