@@ -34,7 +34,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
-
+// USERS
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -47,7 +47,6 @@ const users = {
     password: "2",
   },
 };
-
 
 
 
@@ -181,5 +180,33 @@ app.get('/register', (req, res) => {
     username: req.cookies["username"], // Get username from cookies
   };
   res.render('register', templateVars);
+});
 
+
+// POST/register endpoint. Add a new user object to the global users object. The user object should include the user's id, email and password, similar to the example above.
+
+app.post('/register', (req, res) => {
+  // const email = req.body.email 
+  // const password = req.body.password
+  const { email, password } = req.body; 
+
+   // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).send("Email and password are required.");
+  }
+  
+  // Generate unique ID 
+  const userId = generateRandomString();
+
+  // Add the new user to the users object
+  users[userId] = {
+    id: userId, 
+    email: email,
+    password: password
+  }
+  
+  // Set a cookie with the new user's ID
+  res.cookie('user_id', userId);
+
+  res.redirect('/urls');
 });
