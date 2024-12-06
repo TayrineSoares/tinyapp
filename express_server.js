@@ -167,7 +167,8 @@ app.get("/urls/:id", (req, res) => {
 
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id]; // Get the corresponding long URL from the database
+  const shortUrlId = req.params.id;
+  const longURL = urlDatabase[shortUrlId]; // Get the corresponding long URL from the database
 
   if (!longURL) {
     return res.status(404).send('Short URL not found');
