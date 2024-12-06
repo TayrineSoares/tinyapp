@@ -55,6 +55,19 @@ app.listen(PORT, () => {
 });
 
 
+// --------HELPER FUNCTIONS -----------------
+// userLookup helper function to find registered users 
+const userLookup = function(userEmail) {
+  for (const userId in users) {
+    if (users[userId].email === userEmail) {
+      return userId; 
+    }
+  }
+  return null; 
+};
+
+
+//----------- ROUTES ---------------------
 
 app.get("/", (req, res) => {
   res.send("Hello");
@@ -67,18 +80,6 @@ app.get("/urls.json", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
-
-
-// --------HELPER FUNCTIONS -----------------
-// userLookup helper function to find registered users 
-const userLookup = function(userEmail) {
-  for (const userId in users) {
-    if (users[userId].email === userEmail) {
-      return userId; 
-    }
-  }
-  return null; 
-};
 
 
 //----------- URLS ROUTES ---------------------
@@ -214,8 +215,8 @@ app.get('/login', (req, res) => {
 
 //----------- LOGOUT ROUTES ---------------------
 app.post('/logout', (req, res) => {
-  res.clearCookie('userId');  // Clear the username cookie
-  res.redirect('/urls');  // Redirect after logout (or another page)
+  res.clearCookie('userId');  // Clear the userId cookie
+  res.redirect('/urls');  // Redirect after logout
 });
 
 
