@@ -4,24 +4,7 @@ const cookieParser = require('cookie-parser');
 const app = express(); 
 const PORT = 8080; //Default port 8080
 
-  //// Generate a random string of length 6
-const generateRandomString = function() {
 
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-
-  for (let i = 0; i < 6; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length); 
-    result += characters[randomIndex];
-  }
-
-  if (!urlDatabase[result]) {
-    return result;
-
-  } else {
-    return generateRandomString();
-  }
-};
 
 // ----------MIDDLEWARE--------------
 app.set("view engine", "ejs");
@@ -64,6 +47,25 @@ const userLookup = function(userEmail) {
     }
   }
   return null; 
+};
+
+//// Generate a random string of length 6
+const generateRandomString = function() {
+
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  
+  for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length); 
+      result += characters[randomIndex];
+  }
+  
+  if (!urlDatabase[result]) {
+      return result;
+  
+  } else {
+      return generateRandomString();
+  }
 };
 
 
@@ -195,7 +197,6 @@ app.post("/login", (req, res) => {
   if (user.password !== password) {
     return res.status(403).send("Password is incorrect.");
   }
-  console.log(existingUser);
 
   res.cookie("userId", existingUser);
   res.redirect("/urls");
@@ -216,8 +217,8 @@ app.get('/login', (req, res) => {
 
 //----------- LOGOUT ROUTES ---------------------
 app.post('/logout', (req, res) => {
-  res.clearCookie('userId');  // Clear the userId cookie
-  res.redirect('/login');  // Redirect after logout
+  res.clearCookie('userId');
+  res.redirect('/login');
 });
 
 
