@@ -149,6 +149,12 @@ app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["userId"];
   const user = users[userId]; // Find the user object
 
+  const shortUrlId = req.params.id;
+
+  if (!urlDatabase[shortUrlId]) {
+    return res.send("<html><body>The provided URL does not exist</body></html>\n");
+  }
+
   const templateVars = { 
     user: user,
     id: req.params.id, // Extract the URL ID from the request
