@@ -23,18 +23,19 @@ const generateRandomString = function() {
   }
 };
 
-//MIDDLEWARE
+// ----------MIDDLEWARE--------------
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
+// ----------URL DATABASE --------------
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
 
-// CONST USERS
+// ----------URL DATABASE --------------
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -48,7 +49,7 @@ const users = {
   },
 };
 
-
+// ------ SERVER CONNECTION ---------------
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
@@ -68,7 +69,7 @@ app.get("/hello", (req, res) => {
 });
 
 
-
+// --------HELPER FUNCTIONS -----------------
 // userLookup helper function to find registered users 
 const userLookup = function(userEmail) {
   for (const userId in users) {
@@ -80,6 +81,7 @@ const userLookup = function(userEmail) {
 };
 
 
+//----------- URLS ROUTES ---------------------
 app.get("/urls", (req, res) => {
   const userId = req.cookies["userId"];
   const user = users[userId]; // The new user object includin id, email and password 
@@ -177,25 +179,47 @@ app.post("/urls/:id", (req, res) => {
 });
 
 
-// Login route
+//----------- LOGIN ROUTES ---------------------
 app.post("/login", (req, res) => {
-  const userId = req.body.userId;
+  const { email, password } = req.body; 
 
-  if (userId) {
-    res.cookie("userId", username);
-    res.redirect("/urls");
-    
-  } else {
-    res.status(400).send("Username is required.");
+  //Check if user already exists 
+  const existingUser = userLookup(email); 
+  if (!existingUser) { // checks if the return of userLookup is truthy
+    return res.status(403).send("Email is not registered.");
   }
+
+  //Check if password matches
+  const user = users[existingUser];
+  if (user.password !== password) {
+    return res.status(403).send("Password is incorrect.");
+  }
+
+  res.cookie("userId", existingUser);
+  res.redirect("/urls");
+
 });
 
-// Logout route
+
+// GET /login endpoint that responds with this new login form template
+app.get('/login', (req, res) => {
+  const userId = req.cookies["userId"];
+  const user = users[userId]; // Find the user object
+  const templateVars = { user: user };
+
+  res.render('login', templateVars);
+
+});
+
+
+//----------- LOGOUT ROUTES ---------------------
 app.post('/logout', (req, res) => {
   res.clearCookie('userId');  // Clear the username cookie
   res.redirect('/urls');  // Redirect after logout (or another page)
 });
 
+
+//----------- REGISTER ROUTES ---------------------
 //  GET /register endpoint, which returns the template register.ejs
 app.get('/register', (req, res) => {
   const userId = req.cookies["userId"];
@@ -209,7 +233,6 @@ app.get('/register', (req, res) => {
 
 
 // POST/register endpoint. Add a new user object to the global users object. The user object should include the user's id, email and password. 
-
 app.post('/register', (req, res) => {
   // const email = req.body.email 
   // const password = req.body.password
@@ -243,15 +266,7 @@ app.post('/register', (req, res) => {
 });
 
 
-// GET /login endpoint that responds with this new login form template
-app.get('/login', (req, res) => {
-  const userId = req.cookies["userId"];
-  const user = users[userId]; // Find the user object
-  const templateVars = { user: user };
 
-  res.render('login', templateVars);
-
-});
 
 
 
