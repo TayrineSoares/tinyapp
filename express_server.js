@@ -183,7 +183,24 @@ app.post("/urls/:id", (req, res) => {
 
 
 //----------- LOGIN ROUTES ---------------------
+// GET /login endpoint that responds with a login form template
+app.get('/login', (req, res) => {
+  const userId = req.cookies["userId"]; // retrieve info from cookies
+
+  // If already logged in, redirect to "urls"
+  if (userId) {
+   return res.redirect("/urls");
+  }
+
+  // If not logged in, render login page 
+  const templateVars = { user: null }; // No user data if not logged in
+  res.render('login', templateVars);
+
+});
+
+
 app.post("/login", (req, res) => {
+
   const { email, password } = req.body; 
 
   //Check if user already exists 
@@ -201,18 +218,13 @@ app.post("/login", (req, res) => {
   res.cookie("userId", existingUser);
   res.redirect("/urls");
 
-});
-
-
-// GET /login endpoint that responds with this new login form template
-app.get('/login', (req, res) => {
-  const userId = req.cookies["userId"];
-  const user = users[userId]; // Find the user object
-  const templateVars = { user: user };
-
-  res.render('login', templateVars);
 
 });
+
+// If already logged in, redirect to "urls"
+
+
+
 
 
 //----------- LOGOUT ROUTES ---------------------
@@ -225,12 +237,15 @@ app.post('/logout', (req, res) => {
 //----------- REGISTER ROUTES ---------------------
 //  GET /register endpoint, which returns the template register.ejs
 app.get('/register', (req, res) => {
-  const userId = req.cookies["userId"];
-  const user = users[userId]; // Find the user object
+  const userId = req.cookies["userId"]; // retrieve info from cookies
 
-  const templateVars = {
-    user: user, // Get userId from cookies
-  };
+  // If already logged in, redirect to "urls"
+  if (userId) {
+   return res.redirect("/urls");
+  }
+
+  // If not logged in, render register page 
+  const templateVars = { user: null }; // No user data if not logged in
   res.render('register', templateVars);
 });
 
