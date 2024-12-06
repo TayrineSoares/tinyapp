@@ -187,7 +187,7 @@ app.post("/login", (req, res) => {
   //Check if user already exists 
   const existingUser = userLookup(email); 
   if (!existingUser) { // checks if the return of userLookup is truthy
-    return res.status(403).send("Email is not registered.");
+    return res.status(403).send("Email is not registered or is incorrect.");
   }
 
   //Check if password matches
@@ -195,6 +195,7 @@ app.post("/login", (req, res) => {
   if (user.password !== password) {
     return res.status(403).send("Password is incorrect.");
   }
+  console.log(existingUser);
 
   res.cookie("userId", existingUser);
   res.redirect("/urls");
@@ -216,7 +217,7 @@ app.get('/login', (req, res) => {
 //----------- LOGOUT ROUTES ---------------------
 app.post('/logout', (req, res) => {
   res.clearCookie('userId');  // Clear the userId cookie
-  res.redirect('/urls');  // Redirect after logout
+  res.redirect('/login');  // Redirect after logout
 });
 
 
@@ -227,7 +228,7 @@ app.get('/register', (req, res) => {
   const user = users[userId]; // Find the user object
 
   const templateVars = {
-    user: user, // Get username from cookies
+    user: user, // Get userId from cookies
   };
   res.render('register', templateVars);
 });

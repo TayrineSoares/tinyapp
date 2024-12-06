@@ -27,10 +27,10 @@
       <!-- If user is logged in -->
       <% if (user) { %>
          <!-- Show user email -->
-        <span class="navbar-text mr-3">Logged in as <%= user.id %>! </span> 
+        <span class="navbar-text mr-3 d-inline">Logged in as <%= user.email %>! </span> 
         <!-- Logout Button -->
-        <form class="form-inline" action="/logout" method="POST">
-          <button type="submit" class="btn-outline">Logout</button>
+        <form class="form-inline d-inline" action="/logout" method="POST">
+          <button type="submit" class="btn btn-outline-dark">Logout</button>
         </form>
       
         <!-- If user is NOT logged in -->
