@@ -99,6 +99,12 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["userId"]; 
+
+   // If NOT logged in, redirect to "urls"
+   if (!userId) {
+    return res.redirect("/login");
+   }
+
   const user = users[userId]; 
   const templateVars = { user: user }; 
 
@@ -107,6 +113,13 @@ app.get("/urls/new", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
+  const userId = req.cookies["userId"]; 
+
+   // If NOT logged in, send a message
+   if (!userId) {
+    return res.send("<html><body>You need to login to use this feature.</b></body></html>\n");
+   }
+
    // Log the POST request (submission form from "new") body to the console
   console.log("Long URL sent in the form", req.body);
 
