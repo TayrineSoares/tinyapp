@@ -180,7 +180,7 @@ app.get("/urls/:id", (req, res) => {
   };
 
   if (!urlEntry) {
-    return res.send("<html><body>The provided URL does not exist</body></html>\n");
+    return res.send("<html>The provided URL does not exist.</html>\n");
   }
 
   if (urlEntry.userId !== userId) {
@@ -214,6 +214,11 @@ app.post("/urls/:id", (req, res) => {
   const userId = req.cookies["userId"];
   const urlEntry = urlDatabase[req.params.id];
 
+  // Check if the user is logged in
+  if (!userId) {
+    return res.send("<html>You need to log in to edit this URL.</html>");
+  };
+
   if (!urlEntry) {
     return res.status(404).send("Error: URL does not exist.");
   }
@@ -231,12 +236,23 @@ app.post("/urls/:id", (req, res) => {
 
 //`POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
 app.post("/urls/:id/delete", (req, res) => {
-  if (!urlDatabase[req.params.id]) {
-    return res.status(404).send("Error: URL does not exist.");
+  const userId = req.cookies["userId"]; // Get the userID from cookies
+  const urlEntry = urlDatabase[req.params.id]; // Get the URL from the database using the ID
+
+  // Check if user is logged in
+  if (!userId) {
+    return res.send("<html>You need to log in to delete this URL.</html>");
+  };
+
+  // Check if  user owns the URL
+  if (urlEntry.userId !== userId) {
+    return res.send("<html>You do not have permission to delete this URL.</html>");
   }
 
+  // Delete the URL if the user is the owner
   delete urlDatabase[req.params.id];
-  res.redirect("/urls")
+
+  res.redirect("/urls");
 });
 
 
