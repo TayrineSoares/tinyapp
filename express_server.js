@@ -107,7 +107,7 @@ app.get("/urls", (req, res) => {
   const userUrls = {};
   for (const id in urlDatabase) {
     const url = urlDatabase[id];
-    if (url.userId === userId || url.userId === null) {
+    if (url.userId === userId) {
       userUrls[id] = url;
     }
   };
@@ -123,9 +123,9 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["userId"]; 
 
-   // If NOT logged in, redirect to "urls"
+   // If NOT logged in, send a message
    if (!userId) {
-    return res.redirect("/login");
+    return res.send("<html>You need to log in to create an URL.</html>");
    }
 
   const user = users[userId]; 
@@ -138,12 +138,12 @@ app.get("/urls/new", (req, res) => {
 app.post("/urls", (req, res) => {
   const userId = req.cookies["userId"]; 
 
-   // If NOT logged in, send a message
-   if (!userId) {
+  // If NOT logged in, send a message
+  if (!userId) {
     return res.send("<html><body>You need to login to use this feature.</b></body></html>\n");
-   }
+  }
 
-   // Log the POST request (submission form from "new") body to the console
+  // Log the POST request (submission form from "new") body to the console
   console.log("Long URL sent in the form", req.body);
 
   // URL inserted on the form
@@ -179,12 +179,13 @@ app.get("/urls/:id", (req, res) => {
     return res.send("<html>You need to log in to view this URL.</html>");
   };
 
+  // Check if the URL exists and if the user owns the URL
   if (!urlEntry) {
-    return res.send("<html>The provided URL does not exist.</html>\n");
-  }
+  return res.status(404).send("<html>The provided URL does not exist.</html>");
+  } 
 
   if (urlEntry.userId !== userId) {
-    return res.status(403).send("You do not have permission to view this URL.");
+    return res.status(403).send("<html>You do not have permission to view this URL.</html>");
   }
 
   const templateVars = { 
