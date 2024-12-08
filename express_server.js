@@ -25,7 +25,7 @@ const urlDatabase = {
   } 
 };
 
-// ----------URL DATABASE --------------
+// ----------USERS DATABASE --------------
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -94,9 +94,16 @@ app.get("/hello", (req, res) => {
 //----------- URLS ROUTES ---------------------
 app.get("/urls", (req, res) => {
   const userId = req.cookies["userId"];
+
+  // Check if the user is logged in
+  if (!userId) {
+    return res.send("<html>You need to log in to view your URLs.</html>");
+  };
+
   const user = users[userId]; // The new user object includin id, email and password 
   //console.log(user);
 
+  // Filter URLs belonging to the logged-in user
   const userUrls = {};
   for (const id in urlDatabase) {
     const url = urlDatabase[id];
@@ -167,6 +174,10 @@ app.get("/urls/:id", (req, res) => {
   const user = users[userId]; // Find the user object
   const urlEntry = urlDatabase[req.params.id];
 
+  // Check if the user is logged in
+  if (!userId) {
+    return res.send("<html>You need to log in to view this URL.</html>");
+  };
 
   if (!urlEntry) {
     return res.send("<html><body>The provided URL does not exist</body></html>\n");
