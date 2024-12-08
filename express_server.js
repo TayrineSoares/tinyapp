@@ -172,7 +172,7 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["userId"];
   const user = users[userId]; // Find the user object
-  const urlEntry = urlDatabase[req.params.id];
+  const urlData = urlDatabase[req.params.id];
 
   // Check if the user is logged in
   if (!userId) {
@@ -180,18 +180,18 @@ app.get("/urls/:id", (req, res) => {
   };
 
   // Check if the URL exists and if the user owns the URL
-  if (!urlEntry) {
+  if (!urlData) {
   return res.status(404).send("<html>The provided URL does not exist.</html>");
   } 
 
-  if (urlEntry.userId !== userId) {
+  if (urlData.userId !== userId) {
     return res.status(403).send("<html>You do not have permission to view this URL.</html>");
   }
 
   const templateVars = { 
     user: user,
     id: req.params.id, // Extract the URL ID from the request
-    longURL: urlEntry.longURL 
+    longURL: urlData.longURL 
   };
 
    // Render the 'urls_show' view and pass the template variables
@@ -200,31 +200,31 @@ app.get("/urls/:id", (req, res) => {
 
 
 app.get("/u/:id", (req, res) => {
-  const urlEntry = urlDatabase[req.params.id];
+  const urlData = urlDatabase[req.params.id];
 
-  if (!urlEntry) {
+  if (!urlData) {
     return res.status(404).send("Short URL not found.");
   }
 
-  res.redirect(urlEntry.longURL);
+  res.redirect(urlData.longURL);
 });
 
 
 //POST route for edit button that redirects the client back to the 'urls_index' page and updates the URL
 app.post("/urls/:id", (req, res) => {
   const userId = req.cookies["userId"];
-  const urlEntry = urlDatabase[req.params.id];
+  const urlData = urlDatabase[req.params.id];
 
   // Check if the user is logged in
   if (!userId) {
     return res.send("<html>You need to log in to edit this URL.</html>");
   };
 
-  if (!urlEntry) {
+  if (!urlData) {
     return res.status(404).send("Error: URL does not exist.");
   }
 
-  if (urlEntry.userId !== userId) {
+  if (urlData.userId !== userId) {
     return res.status(403).send("You cannot edit this URL.");
   }
 
@@ -238,7 +238,7 @@ app.post("/urls/:id", (req, res) => {
 //`POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
 app.post("/urls/:id/delete", (req, res) => {
   const userId = req.cookies["userId"]; // Get the userID from cookies
-  const urlEntry = urlDatabase[req.params.id]; // Get the URL from the database using the ID
+  const urlData = urlDatabase[req.params.id]; // Get the URL from the database using the ID
 
   // Check if user is logged in
   if (!userId) {
@@ -246,7 +246,7 @@ app.post("/urls/:id/delete", (req, res) => {
   };
 
   // Check if  user owns the URL
-  if (urlEntry.userId !== userId) {
+  if (urlData.userId !== userId) {
     return res.send("<html>You do not have permission to delete this URL.</html>");
   }
 
