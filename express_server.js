@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 
 const app = express(); 
 const PORT = 8080; //Default port 8080
@@ -26,18 +27,8 @@ const urlDatabase = {
 };
 
 // ----------USERS DATABASE --------------
-const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "a@a.com",
-    password: "1",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "b@b.com",
-    password: "2",
-  },
-};
+const users = {};
+
 
 // ------ SERVER CONNECTION ---------------
 app.listen(PORT, () => {
@@ -286,9 +277,11 @@ app.post("/login", (req, res) => {
 
   //Check if password matches
   const user = users[existingUser];
-  if (user.password !== password) {
+
+  // Compare the entered password (req.body.password) with the HASHED password stored in user.password in the Registration route
+  if (!bcrypt.compareSync(password, user.password)) {
     return res.status(403).send("Password is incorrect.");
-  }
+  } 
 
   res.cookie("userId", existingUser);
   res.redirect("/urls");
@@ -307,6 +300,7 @@ app.post('/logout', (req, res) => {
 //----------- REGISTER ROUTES ---------------------
 //  GET /register endpoint, which returns the template register.ejs
 app.get('/register', (req, res) => {
+  
   const userId = req.cookies["userId"]; // retrieve info from cookies
 
   // If already logged in, redirect to "urls"
@@ -320,13 +314,14 @@ app.get('/register', (req, res) => {
 });
 
 
+
 // POST/register endpoint. Add a new user object to the global users object. The user object should include the user's id, email and password. 
 app.post('/register', (req, res) => {
   // const email = req.body.email 
   // const password = req.body.password
   const { email, password } = req.body; 
 
-   // Check if email and password are provided
+  // Check if email and password are provided
   if (!email || !password) {
     return res.status(400).send("Email and password are required.");
   }
@@ -340,13 +335,19 @@ app.post('/register', (req, res) => {
   // If doesnt exist, create user and generate new Id. 
   const userId = generateRandomString();
 
+  //hash password
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
   // Add the new user to the users object
   users[userId] = {
     id: userId, 
     email: email,
-    password: password
+    password: hashedPassword // hashed password instead of text
   }
   
+  // for debuggin
+  console.log("Users after registration:", users);
+
   // Set a cookie with the new user's ID
   res.cookie('userId', userId);
 
