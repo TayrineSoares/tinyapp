@@ -14,8 +14,15 @@ app.use(cookieParser());
 
 // ----------URL DATABASE --------------
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b2xVn2: {
+    longURL: "http://www.lighthouselabs.ca",
+    userId: null
+  },
+
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userId: null
+  } 
 };
 
 // ----------URL DATABASE --------------
@@ -90,9 +97,18 @@ app.get("/urls", (req, res) => {
   const user = users[userId]; // The new user object includin id, email and password 
   //console.log(user);
 
+  const userUrls = {};
+  for (const id in urlDatabase) {
+    const url = urlDatabase[id];
+    if (url.userId === userId || url.userId === null) {
+      userUrls[id] = url;
+    }
+  };
+
   const templateVars = { 
     user: user,
-    urls: urlDatabase };
+    urls: userUrls
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -131,16 +147,17 @@ app.post("/urls", (req, res) => {
     return res.status(400).send("Error: Please provide a valid URL");
   }
 
-  // generate an Id for the submitted url (the Id will be the short URL)
   const id = generateRandomString();
 
   // adds new info (key pair value) to urlDatabase object
-  urlDatabase[id] = longURL;
+  urlDatabase[id] = {
+    longURL: longURL,
+    userId: userId // Associate with logged in user
+  } 
 
   //Log the updated urlDatabase (for debugging)
   console.log("Updated urlDatabase", urlDatabase);
 
-  // Redirect to the new short URL page (/urls/:id)
   res.redirect(`/urls/${id}`);
 });
 
@@ -148,17 +165,21 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["userId"];
   const user = users[userId]; // Find the user object
+  const urlEntry = urlDatabase[req.params.id];
 
-  const shortUrlId = req.params.id;
 
-  if (!urlDatabase[shortUrlId]) {
+  if (!urlEntry) {
     return res.send("<html><body>The provided URL does not exist</body></html>\n");
+  }
+
+  if (urlEntry.userId !== userId) {
+    return res.status(403).send("You do not have permission to view this URL.");
   }
 
   const templateVars = { 
     user: user,
     id: req.params.id, // Extract the URL ID from the request
-    longURL: urlDatabase[req.params.id] 
+    longURL: urlEntry.longURL 
   };
 
    // Render the 'urls_show' view and pass the template variables
@@ -167,13 +188,33 @@ app.get("/urls/:id", (req, res) => {
 
 
 app.get("/u/:id", (req, res) => {
-  const shortUrlId = req.params.id;
-  const longURL = urlDatabase[shortUrlId]; // Get the corresponding long URL from the database
+  const urlEntry = urlDatabase[req.params.id];
 
-  if (!longURL) {
-    return res.status(404).send('Short URL not found');
+  if (!urlEntry) {
+    return res.status(404).send("Short URL not found.");
   }
-  res.redirect(longURL);
+
+  res.redirect(urlEntry.longURL);
+});
+
+
+//POST route for edit button that redirects the client back to the 'urls_index' page and updates the URL
+app.post("/urls/:id", (req, res) => {
+  const userId = req.cookies["userId"];
+  const urlEntry = urlDatabase[req.params.id];
+
+  if (!urlEntry) {
+    return res.status(404).send("Error: URL does not exist.");
+  }
+
+  if (urlEntry.userId !== userId) {
+    return res.status(403).send("You cannot edit this URL.");
+  }
+
+  //Update the URL 
+  urlDatabase[req.params.id].longURL = req.body.newURL;
+
+  res.redirect(`/urls/${id}`);
 });
 
 
@@ -185,20 +226,6 @@ app.post("/urls/:id/delete", (req, res) => {
 
   delete urlDatabase[req.params.id];
   res.redirect("/urls")
-});
-
-//POST route for edit button that redirects the client back to the 'urls_index' page and updates the URL
-app.post("/urls/:id", (req, res) => {
-  const id = req.params.id;
-  if (!urlDatabase[id]) {
-    return res.status(404).send("Error: URL does not exist.");
-  }
-
-  //Update the URL 
-  const newUrl = req.body.newURL;
-  urlDatabase[id] = newUrl;
-
-  res.redirect(`/urls/${id}`);
 });
 
 
@@ -240,11 +267,6 @@ app.post("/login", (req, res) => {
 
 
 });
-
-// If already logged in, redirect to "urls"
-
-
-
 
 
 //----------- LOGOUT ROUTES ---------------------
@@ -302,9 +324,3 @@ app.post('/register', (req, res) => {
 
   res.redirect('/urls');
 });
-
-
-
-
-
-
