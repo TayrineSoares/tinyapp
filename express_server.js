@@ -33,7 +33,7 @@ const urlDatabase = {
 };
 
 // ----------USERS DATABASE --------------
-const users = {};
+const usersDatabase = {};
 
 
 // ------ SERVER CONNECTION ---------------
@@ -44,9 +44,9 @@ app.listen(PORT, () => {
 
 // --------HELPER FUNCTIONS -----------------
 // userLookup helper function to find registered users 
-const userLookup = function(userEmail) {
-  for (const userId in users) {
-    if (users[userId].email === userEmail) {
+const userLookup = function(userEmail, database) {
+  for (const userId in database) {
+    if (database[userId].email === userEmail) {
       return userId; 
     }
   }
@@ -108,13 +108,13 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body; 
 
   //Check if user already exists 
-  const existingUser = userLookup(email); 
+  const existingUser = userLookup(email, usersDatabase); 
   if (!existingUser) { // checks if the return of userLookup is truthy
     return res.status(403).send("Email is not registered or is incorrect.");
   }
 
   //Check if password matches
-  const user = users[existingUser];
+  const user = usersDatabase[existingUser];
 
   // Compare the entered password (req.body.password) with the HASHED password stored in user.password in the Registration route
   if (!bcrypt.compareSync(password, user.password)) {
@@ -137,7 +137,7 @@ app.get('/urls', (req, res) => {
     return res.send("<html>You need to log in to view your URLs.</html>");
   };
 
-  const user = users[userId]; // The new user object includin id, email and password 
+  const user = usersDatabase[userId]; // The new user object includin id, email and password 
   //console.log(user);
 
   // Filter URLs belonging to the logged-in user
@@ -165,7 +165,7 @@ app.get('/urls/new', (req, res) => {
     return res.send("<html>You need to log in to create an URL.</html>");
    }
 
-  const user = users[userId]; 
+  const user = usersDatabase[userId]; 
   const templateVars = { user: user }; 
 
   res.render('urls_new', templateVars);
@@ -208,7 +208,7 @@ app.post('/urls', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   const userId = req.session['userId'];
-  const user = users[userId]; // Find the user object
+  const user = usersDatabase[userId]; // Find the user object
   const urlData = urlDatabase[req.params.id];
 
   // Check if the user is logged in
@@ -267,9 +267,9 @@ app.post('/urls/:id', (req, res) => {
   }
 
   //Update the URL 
-  urlDatabase[req.params.id].longURL = req.body.newURL;
+  urlData.longURL = req.body.newURL;
 
-  res.redirect(`/urls/${id}`);
+  res.redirect(`/urls/${req.params.id}`);
 });
 
 
@@ -333,7 +333,7 @@ app.post('/register', (req, res) => {
   }
 
   //Check if user already exists 
-  const existingUser = userLookup(email); 
+  const existingUser = userLookup(email, usersDatabase); 
     if (existingUser) { // checks if the return of userLookup is truthy
       return res.status(400).send("Email is already registered.");
     }
@@ -345,18 +345,16 @@ app.post('/register', (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   // Add the new user to the users object
-  users[userId] = {
+  usersDatabase[userId] = {
     id: userId, 
     email: email,
     password: hashedPassword // hashed password instead of text
   }
   
-  // for debugging
-  console.log("Users after registration:", users);
 
   // Set a cookie with the new user's ID
   // res.cookie('userId', userId);
-  req.session.userId = existingUser; // switching to encrypted cookies
+  req.session.userId = userId; // switching to encrypted cookies
   res.redirect('/login');
 });
 
