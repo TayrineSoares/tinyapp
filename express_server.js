@@ -1,7 +1,11 @@
 const express = require('express');
-
 const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
+
+// Import the function from helpers.js
+const {userLookup, generateRandomString } = require('./helpers'); 
+
+
 const app = express(); 
 const PORT = 8080; //Default port 8080
 
@@ -41,36 +45,6 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-
-// --------HELPER FUNCTIONS -----------------
-// userLookup helper function to find registered users 
-const userLookup = function(userEmail, database) {
-  for (const userId in database) {
-    if (database[userId].email === userEmail) {
-      return userId; 
-    }
-  }
-  return null; 
-};
-
-//// Generate a random string of length 6
-const generateRandomString = function() {
-
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  
-  for (let i = 0; i < 6; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length); 
-      result += characters[randomIndex];
-  }
-  
-  if (!urlDatabase[result]) {
-      return result;
-  
-  } else {
-      return generateRandomString();
-  }
-};
 
 //----------- GENERAL ROUTES ---------------------
 
@@ -191,7 +165,7 @@ app.post('/urls', (req, res) => {
     return res.status(400).send("Error: Please provide a valid URL");
   }
 
-  const id = generateRandomString();
+  const id = generateRandomString(urlDatabase);
 
   // adds new info (key pair value) to urlDatabase object
   urlDatabase[id] = {
@@ -339,7 +313,7 @@ app.post('/register', (req, res) => {
     }
   
   // If doesnt exist, create user and generate new Id. 
-  const userId = generateRandomString();
+  const userId = generateRandomString(urlDatabase);
 
   //hash password
   const hashedPassword = bcrypt.hashSync(password, 10);
