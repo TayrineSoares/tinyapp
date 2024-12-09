@@ -1,16 +1,22 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
-const bcrypt = require('bcryptjs');
 
+const bcrypt = require('bcryptjs');
+const cookieSession = require('cookie-session');
 const app = express(); 
 const PORT = 8080; //Default port 8080
-
 
 
 // ----------MIDDLEWARE--------------
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session', // can be any name, will NOT affect the code. It becomes the name of the cookie inside the browser
+
+  keys: ['detergente'], // ARRAY with any string. This the key that is used to encrypt and decrypt the cookies. We want to keep this secret. 
+
+  //Optional parameter: how long is the cookie valid for?
+  maxAge: 24 * 60 * 60 * 1000 // this number = 24 hours
+}));
 
 
 // ----------URL DATABASE --------------
