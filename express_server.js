@@ -82,7 +82,7 @@ app.post('/register', (req, res) => {
     return res.status(400).send("Email and password are required.");
   }
 
-  //Check if user already exists 
+  //Check if user already exists
   const existingUser = userLookup(email, usersDatabase);
   if (existingUser) {
     return res.status(400).send("Email is already registered.");
@@ -99,7 +99,7 @@ app.post('/register', (req, res) => {
     id: userId,
     email: email,
     password: hashedPassword // hashed password instead of text
-  }
+  };
 
   // Set a cookie with the new user's ID
   req.session.userId = userId;
@@ -127,7 +127,7 @@ app.post('/login', (req, res) => {
 
   const { email, password } = req.body;
 
-  //Check if user already exists 
+  //Check if user already exists
   const existingUser = userLookup(email, usersDatabase);
   if (!existingUser) {
     return res.status(403).send("Email is not registered or is incorrect.");
@@ -155,9 +155,9 @@ app.get('/urls', (req, res) => {
   // Check if the user is logged in
   if (!userId) {
     return res.send("<html>You need to log in to view your URLs.</html>");
-  };
+  }
 
-  const user = usersDatabase[userId]; // The new user object including id, email and password 
+  const user = usersDatabase[userId]; // The new user object including id, email and password
 
   // Filter URLs belonging to the logged-in user
   const userUrls = {};
@@ -166,7 +166,7 @@ app.get('/urls', (req, res) => {
     if (url.userId === userId) {
       userUrls[id] = url;
     }
-  };
+  }
 
   const templateVars = {
     user: user,
@@ -216,7 +216,7 @@ app.post('/urls', (req, res) => {
   urlDatabase[id] = {
     longURL: longURL,
     userId: userId // Associate with logged in user
-  }
+  };
 
   res.redirect(`/urls/${id}`);
 });
@@ -230,7 +230,7 @@ app.get('/urls/:id', (req, res) => {
   // Check if the user is logged in
   if (!userId) {
     return res.send("<html>You need to log in to view this URL.</html>");
-  };
+  }
 
   // Check if the URL exists and if the user owns the URL
   if (!urlData) {
@@ -262,7 +262,7 @@ app.get('/u/:id', (req, res) => {
 });
 
 
-//POST route for edit button 
+//POST route for edit button
 app.post('/urls/:id', (req, res) => {
 
   const userId = req.session['userId'];
@@ -270,7 +270,7 @@ app.post('/urls/:id', (req, res) => {
 
   if (!userId) {
     return res.send("<html>You need to log in to edit this URL.</html>");
-  };
+  }
 
   if (!urlData) {
     return res.send("<html>Error: URL does not exist.</html>");
@@ -280,14 +280,14 @@ app.post('/urls/:id', (req, res) => {
     return res.status(403).send("<html>You cannot edit this URL.</html>");
   }
 
-  //Update the URL 
+  //Update the URL
   urlData.longURL = req.body.newURL;
 
   res.redirect(`/urls/${req.params.id}`);
 });
 
 
-//`POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
+//`POST` route that removes a URL resource and redirect the client back to the 'urls_index' page
 app.post('/urls/:id/delete', (req, res) => {
   const userId = req.session['userId'];
   const urlData = urlDatabase[req.params.id];
@@ -295,7 +295,7 @@ app.post('/urls/:id/delete', (req, res) => {
   // Check if user is logged in
   if (!userId) {
     return res.send("<html>You need to log in to delete this URL.</html>");
-  };
+  }
 
   // Check if  user owns the URL
   if (urlData.userId !== userId) {
