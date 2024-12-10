@@ -5,21 +5,19 @@ const SALT_ROUNDS = 10;
 
 const {userLookup, generateRandomString } = require('./helpers'); 
 
-
 const app = express(); 
 const PORT = 8080; 
-
 
 // ----------MIDDLEWARE--------------
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieSession({
-  name: 'session', // can be any name, will NOT affect the code. It becomes the name of the cookie inside the browser
 
-  keys: ['detergente'], // ARRAY with any string. This the key that is used to encrypt and decrypt the cookies. We want to keep this secret. 
+app.use(cookieSession({
+  name: 'session',
+  keys: ['detergente'], 
 
   //Optional parameter: how long is the cookie valid for?
-  maxAge: 24 * 60 * 60 * 1000 // this number = 24 hours
+  maxAge: 24 * 60 * 60 * 1000 
 }));
 
 
@@ -39,12 +37,10 @@ const urlDatabase = {
 // ----------USERS DATABASE --------------
 const usersDatabase = {};
 
-
 // ------ SERVER CONNECTION ---------------
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
 
 //----------- GENERAL ROUTES ---------------------
 
@@ -62,17 +58,17 @@ app.get('/hello', (req, res) => {
 
 
 //----------- LOGIN ROUTES ---------------------
-// GET /login endpoint that responds with a login form template
+// GET /login endpoint 
 app.get('/login', (req, res) => {
-  const userId = req.session['userId']; // retrieve info from cookies
+  const userId = req.session['userId'];
 
-  // If already logged in, redirect to "urls"
+  // If already logged in
   if (userId) {
    return res.redirect('/urls');
   }
 
   // If not logged in, render login page 
-  const templateVars = { user: null }; // No user data if not logged in
+  const templateVars = { user: null };
   res.render('login', templateVars);
 
 });
@@ -83,7 +79,7 @@ app.post('/login', (req, res) => {
 
   //Check if user already exists 
   const existingUser = userLookup(email, usersDatabase); 
-  if (!existingUser) { // checks if the return of userLookup is truthy
+  if (!existingUser) {
     return res.status(403).send("Email is not registered or is incorrect.");
   }
 
@@ -95,8 +91,7 @@ app.post('/login', (req, res) => {
     return res.status(403).send("Password is incorrect.");
   } 
 
-  // res.cookie("userId", existingUser);
-  req.session.userId = existingUser; // switching to encrypted cookies
+  req.session.userId = existingUser;
   res.redirect('/urls');
 
 });
@@ -112,7 +107,6 @@ app.get('/urls', (req, res) => {
   };
 
   const user = usersDatabase[userId]; // The new user object includin id, email and password 
-  //console.log(user);
 
   // Filter URLs belonging to the logged-in user
   const userUrls = {};
@@ -134,7 +128,7 @@ app.get('/urls', (req, res) => {
 app.get('/urls/new', (req, res) => {
   const userId = req.session['userId']; 
 
-   // If NOT logged in, send a message
+   // If NOT logged in
    if (!userId) {
     return res.redirect('/login');
    }
@@ -173,16 +167,13 @@ app.post('/urls', (req, res) => {
     userId: userId // Associate with logged in user
   } 
 
-  //Log the updated urlDatabase (for debugging)
-  console.log("Updated urlDatabase", urlDatabase);
-
   res.redirect(`/urls/${id}`);
 });
 
 
 app.get('/urls/:id', (req, res) => {
   const userId = req.session['userId'];
-  const user = usersDatabase[userId]; // Find the user object
+  const user = usersDatabase[userId];
   const urlData = urlDatabase[req.params.id];
 
   // Check if the user is logged in
@@ -205,7 +196,6 @@ app.get('/urls/:id', (req, res) => {
     longURL: urlData.longURL 
   };
 
-   // Render the 'urls_show' view and pass the template variables
   res.render('urls_show', templateVars);
 });
 
@@ -223,21 +213,20 @@ app.get('/u/:id', (req, res) => {
 
 //POST route for edit button that redirects the client back to the 'urls_index' page and updates the URL
 app.post('/urls/:id', (req, res) => {
-  // const userId = req.cookies["userId"];
-  const userId = req.session['userId']; // switched to req.session to use encrypted cookies
+
+  const userId = req.session['userId']; 
   const urlData = urlDatabase[req.params.id];
 
-  // Check if the user is logged in
   if (!userId) {
     return res.send("<html>You need to log in to edit this URL.</html>");
   };
 
   if (!urlData) {
-    return res.status(404).send("Error: URL does not exist.");
+    return res.send("<html>Error: URL does not exist.</html>");
   }
 
   if (urlData.userId !== userId) {
-    return res.status(403).send("You cannot edit this URL.");
+    return res.status(403).send("<html>You cannot edit this URL.</html>");
   }
 
   //Update the URL 
@@ -249,8 +238,8 @@ app.post('/urls/:id', (req, res) => {
 
 //`POST` route that removes a URL resource and redirect the client back to the 'urls_index' page 
 app.post('/urls/:id/delete', (req, res) => {
-  const userId = req.session['userId']; // Get the userID from cookies
-  const urlData = urlDatabase[req.params.id]; // Get the URL from the database using the ID
+  const userId = req.session['userId'];
+  const urlData = urlDatabase[req.params.id];
 
   // Check if user is logged in
   if (!userId) {
@@ -262,9 +251,7 @@ app.post('/urls/:id/delete', (req, res) => {
     return res.send("<html>You do not have permission to delete this URL.</html>");
   }
 
-  // Delete the URL if the user is the owner
   delete urlDatabase[req.params.id];
-
   res.redirect('/urls');
 });
 
@@ -272,17 +259,16 @@ app.post('/urls/:id/delete', (req, res) => {
 //----------- LOGOUT ROUTES ---------------------
 app.post('/logout', (req, res) => {
   
-  // res.clearCookie('userId');
-  req.session = null; //clear the whole req.session object, clears all cookies
+  req.session = null;
   res.redirect('/login');
 });
 
 
 //----------- REGISTER ROUTES ---------------------
-//  GET /register endpoint, which returns the template register.ejs
+//  GET /register endpoint
 app.get('/register', (req, res) => {
   
-  const userId = req.session['userId']; // retrieve info from cookies
+  const userId = req.session['userId'];
 
   // If already logged in, redirect to "urls"
   if (userId) {
@@ -295,7 +281,7 @@ app.get('/register', (req, res) => {
 });
 
 
-// POST/register endpoint. Add a new user object to the global users object. The user object should include the user's id, email and password. 
+// POST/register endpoint. Add a new user object to the global users object.
 app.post('/register', (req, res) => {
   // const email = req.body.email 
   // const password = req.body.password
@@ -308,11 +294,11 @@ app.post('/register', (req, res) => {
 
   //Check if user already exists 
   const existingUser = userLookup(email, usersDatabase); 
-    if (existingUser) { // checks if the return of userLookup is truthy
+    if (existingUser) {
       return res.status(400).send("Email is already registered.");
     }
   
-  // If doesnt exist, create user and generate new Id. 
+  // If doesnt exist, create user and generate new Id.
   const userId = generateRandomString(urlDatabase);
 
   //hash password
@@ -325,10 +311,7 @@ app.post('/register', (req, res) => {
     password: hashedPassword // hashed password instead of text
   }
   
-
   // Set a cookie with the new user's ID
-  // res.cookie('userId', userId);
-  req.session.userId = userId; // switching to encrypted cookies
+  req.session.userId = userId; 
   res.redirect('/login');
 });
-
