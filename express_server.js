@@ -1,13 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
+const SALT_ROUNDS = 10;
 
-// Import the function from helpers.js
 const {userLookup, generateRandomString } = require('./helpers'); 
 
 
 const app = express(); 
-const PORT = 8080; //Default port 8080
+const PORT = 8080; 
 
 
 // ----------MIDDLEWARE--------------
@@ -49,7 +49,7 @@ app.listen(PORT, () => {
 //----------- GENERAL ROUTES ---------------------
 
 app.get('/', (req, res) => {
-  res.send('Hello');
+  res.redirect('login');
 });
 
 app.get('/urls.json', (req, res) => {
@@ -136,7 +136,7 @@ app.get('/urls/new', (req, res) => {
 
    // If NOT logged in, send a message
    if (!userId) {
-    return res.send("<html>You need to log in to create an URL.</html>");
+    return res.redirect('/login');
    }
 
   const user = usersDatabase[userId]; 
@@ -316,7 +316,7 @@ app.post('/register', (req, res) => {
   const userId = generateRandomString(urlDatabase);
 
   //hash password
-  const hashedPassword = bcrypt.hashSync(password, 10);
+  const hashedPassword = bcrypt.hashSync(password, SALT_ROUNDS);
 
   // Add the new user to the users object
   usersDatabase[userId] = {

@@ -20,6 +20,7 @@
   <body>
     <%- include('partials/_header.ejs') %>
     <main style="margin: 1em;">
+
       <h3>My URLs</h3>
       <table class="table">
         <thead>
@@ -42,11 +43,15 @@
               <form method="POST" action="/urls/<%= id %>/delete">
               <button type="submit" class="btn btn-outline-danger">Delete</button>
               </form>
+
             </td>
           </tr>
           <% } %>
       </tbody>
    </table>
+   
+   <!-- Link to create a new short URL -->
+  <p><a href="/urls/new">Create a New Short Link</a></p>
   </main>
     <!-- Bootstrap JS -->
     <script

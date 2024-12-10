@@ -6,7 +6,7 @@ const userLookup = function(userEmail, database) {
       return userId; 
     }
   }
-  return null; 
+  return ""; 
 };
 
 //// Generate a random string of length 6
