@@ -10,7 +10,9 @@ It allows users to shorten long URLs, similar to services like bit.ly. This proj
 - Personalized URL management—users can view, edit, and delete their URLs.
 
 ## Final Product
-
+![tinyapp_register](https://github.com/user-attachments/assets/3d632153-b9d2-40e5-bb22-6776ad15db44)
+![tinyapp_urls](https://github.com/user-attachments/assets/de2e11f8-4314-4031-bdca-e18365b75ad7)
+![tinyapp_edit](https://github.com/user-attachments/assets/2d9b7f5c-a980-42c4-8909-a8bf9bbb307e)
 
 ## Dependencies
 
