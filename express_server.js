@@ -37,11 +37,6 @@ const urlDatabase = {
 // ----------USERS DATABASE --------------
 const usersDatabase = {};
 
-// ------ SERVER CONNECTION ---------------
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
 //----------- GENERAL ROUTES ---------------------
 
 app.get('/', (req, res) => {
@@ -314,3 +309,7 @@ app.post('/logout', (req, res) => {
   res.redirect('/login');
 });
 
+// ------ SERVER CONNECTION ---------------
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
